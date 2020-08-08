@@ -1,0 +1,12 @@
+{
+  "name": "TomatoAlarm",
+  "version": "0.0.1",
+  "settings": {
+    "alarm": {
+      "work_interval": 25,
+      "rest_interval": 5
+    },
+    "ui_theme": "light",
+    "notification": true
+  }
+}
