@@ -19,6 +19,7 @@ class AboutPageState extends State<AboutPage> {
 			backgroundColor: MyApp.myConfig.currentTheme.wallColor,
 			appBar: AppBar(
 				title: Text("About"),
+				elevation: 10,
 			),
 			body: Container(
 				margin: EdgeInsets.all(15),

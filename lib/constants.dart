@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tomatotimer/settingsitem.dart';
+
+final settingsThemeSwitchKey = new GlobalKey<SettingsSwitchState>();
+final settingsNotifySwitchKey = new GlobalKey<SettingsSwitchState>();
+final settingsVibrateSwitchKey = new GlobalKey<SettingsSwitchState>();
 
 const ColorTheme lightTheme = const ColorTheme(
 	Color(0xFFff4d47),

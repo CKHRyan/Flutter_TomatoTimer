@@ -1,9 +1,17 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'main.dart';
+import 'settings.dart';
 import 'constants.dart';
 
 class SettingsItem extends StatefulWidget {
+	final double itemheight;
+	final int itemcount;
+	final List<String> itemname;
+	final List<dynamic> iteminput;
+	final Function itemfunction;
+
 	SettingsItem({
 		Key key, 
 		this.itemheight, 
@@ -13,19 +21,11 @@ class SettingsItem extends StatefulWidget {
 		this.itemfunction
 		}) : super(key: key);
 
-	final double itemheight;
-	final int itemcount;
-	final List<String> itemname;
-	final List<dynamic> iteminput;
-	final Function itemfunction;
-
 	@override
 	SettingsItemState createState() => SettingsItemState();
 }
 
 class SettingsItemState extends State<SettingsItem> {
-
-  SettingsItemState();
 
   @override
   Widget build(BuildContext context) {
@@ -85,41 +85,61 @@ class SettingsItemState extends State<SettingsItem> {
 }
 
 class SettingsSwitch extends StatefulWidget {
-	SettingsSwitch({Key key}) : super(key: key);
-	static ValueNotifier changeSwitchVal = ValueNotifier(false);
+	final String switchName;
+	SettingsSwitch({Key key, this.switchName}) : super(key: key);
+
 	@override
-	SettingsSwitchState createState() => SettingsSwitchState();
+	SettingsSwitchState createState() => SettingsSwitchState();//switchState
 }
 
 class SettingsSwitchState extends State<SettingsSwitch> {
-	static bool isSwitched;
-	
+	bool isSwitched;
+
 	@override
   void initState() {
     super.initState();
+		bool initValue;
+		switch(widget.switchName) {
+			case "ThemeSwitch":
+				initValue = MyApp.myConfig.currentTheme==darkTheme;
+				break;
+			case "NotifySwitch":
+				try {
+					initValue = SettingsPageState.lastNotiSettings[0];
+				} 
+				catch(err) {
+					initValue = MyApp.myConfig.isNotificationEnable;
+				}
+				break;
+			case "VibrateSwitch":
+				try {
+					initValue = SettingsPageState.lastNotiSettings[1];
+				} 
+				catch(err) {
+					initValue = MyApp.myConfig.isVibrationEnable;
+				}
+				break;
+			default:
+				initValue = true;
+		}
+		this.isSwitched = initValue;
+	}
+
+	void setSwitchValue(bool value) {
 		setState(() {
-		  SettingsSwitchState.isSwitched = MyApp.myConfig.currentTheme == darkTheme;
+		  this.isSwitched = value;
 		});
-		SettingsSwitch.changeSwitchVal.addListener(() {
-			if (mounted) {
-				setState(() {
-					isSwitched = SettingsSwitch.changeSwitchVal.value;
-				});
-				print("Switch value listener responds successfully.");
-			}
-		});
-  }
+	}
 
 	@override
   Widget build(BuildContext context) { 
     return Switch(
-				value: SettingsSwitchState.isSwitched,
+				value: this.isSwitched,
 				onChanged: (bool value) {
 					setState(() {
-					  SettingsSwitchState.isSwitched = value;
-						SettingsSwitch.changeSwitchVal.value = value;
-						print("Dark theme switch turns to " + value.toString());
+					  this.isSwitched = value;
 					});
+					print("The switch turns to " + value.toString());
 				},
 		);
 	}

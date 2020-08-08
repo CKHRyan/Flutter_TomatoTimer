@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:tomatotimer/main.dart';
+import 'package:vibration/vibration.dart';
+
+import 'timer.dart';
+import 'settings.dart';
+import 'about.dart';
+import 'notification.dart';
 
 enum direction {
 	fromTop,
@@ -44,6 +51,49 @@ class CommonMethod {
 				);
 			},
 		);
+	}
+}
+
+class PageManager {
+	static void openSettingsPage (BuildContext context) async {
+		final setvalues = await Navigator.push(
+			context,
+			CommonMethod.pageSlideRoute(SettingsPage(), direction.fromLeft)
+		);
+		MyApp.myConfig.changeUserSettings(await setvalues);
+		TimerPage.isMainPage.value = true;
+	}
+
+	static void openAboutPage(BuildContext context) {
+		Navigator.push(
+			context,
+			CommonMethod.pageBasicRoute(AboutPage())
+		);
+	}
+
+	static void openNotificationPage(BuildContext context) async {
+		await Navigator.push(
+			context,
+			CommonMethod.pageBasicRoute(NotificationPage())
+		).then((valuelist){
+			if (valuelist is List<bool>) {
+				SettingsPageState.lastNotiSettings = valuelist;
+			}
+			else {
+				print("Failed to pass back the n;otification settings value.");
+			}
+		});
+	}
+}
+
+class Vibrator {
+	void vibrate() async{
+		if (!MyApp.myConfig.isVibrationEnable) {
+			return;
+		}
+		if (await Vibration.hasVibrator()) {
+			Vibration.vibrate(duration: 1000);
+		}
 	}
 }
 
@@ -103,16 +153,19 @@ class LocalNotification {
 	}
 
 	Future<void> sendNotification(String action, message) async {
-	var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-			'com.rchungkh.tomatotimer', 'Tomato Timer', 'Notification for time alarm.',
-			importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-	var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-	var platformChannelSpecifics = NotificationDetails(
-			androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-	await flutterLocalNotificationsPlugin.show(
-			0, action, message, platformChannelSpecifics,
-			payload: 'item x');
-}
+		if (!MyApp.myConfig.isNotificationEnable) {
+			return;
+		}
+		var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+				'com.rchungkh.tomatotimer', 'Tomato Timer', 'Notification for time alarm.',
+				importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+		var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+		var platformChannelSpecifics = NotificationDetails(
+				androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+		await flutterLocalNotificationsPlugin.show(
+				0, action, message, platformChannelSpecifics,
+				payload: 'item x');
+	}
 
 	Future<void> cancelNotification() async {
 		await flutterLocalNotificationsPlugin.cancelAll();

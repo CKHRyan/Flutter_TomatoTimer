@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'main.dart';
-import 'settings.dart';
 import 'methods.dart';
 
 class Header extends StatelessWidget {
@@ -48,14 +47,7 @@ class Header extends StatelessWidget {
 								width: 40,
 								color: Color(0xFFEEEEEE),
 							),
-							onTap: () async {
-								final setvalues = await Navigator.push(
-									context,
-									CommonMethod.pageSlideRoute(SettingsPage(), direction.fromLeft)
-								);
-								MyApp.myConfig.changeUserSettings(setvalues);
-								MyHomePage.isMainPage.value = true;
-							},
+							onTap: () => PageManager.openSettingsPage(context)
 						)
 					)
 				),

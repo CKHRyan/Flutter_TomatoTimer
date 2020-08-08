@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:tomatotimer/constants.dart';
 import 'main.dart';
 import 'settingsitem.dart';
-import "about.dart";
 import 'methods.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -13,6 +13,8 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
 	static List<TextEditingController> uservalues = new List<TextEditingController>();
+	static List<SettingsSwitch> userswitches = new List<SettingsSwitch>();
+	static List<bool> lastNotiSettings;
 
 	@override
   void initState() {
@@ -26,21 +28,14 @@ class SettingsPageState extends State<SettingsPage> {
 		);
 	}
 
-	static void resetDefaultSettings() async {
+	static void resetDefaultSettings(BuildContext context) async {
 		MyApp.myConfig.getDefaultUserConfig()
 		.then((defaultsettings) {
 			uservalues[0].text = defaultsettings[0];
 			uservalues[1].text = defaultsettings[1];
-			SettingsSwitch.changeSwitchVal.value = defaultsettings[2] == "dark";
+			settingsThemeSwitchKey.currentState.setSwitchValue(defaultsettings[2]=="dark");
 			print("Reset to default settings succesfully.");
 		});
-	}
-
-	static void openAboutPage(BuildContext context) async {
-		Navigator.push(
-			context,
-			CommonMethod.pageBasicRoute(AboutPage())
-		);
 	}
 
   @override
@@ -53,12 +48,16 @@ class SettingsPageState extends State<SettingsPage> {
 				leading: IconButton(
 					icon: Icon(Icons.arrow_back, color: Colors.white),
 					onPressed: () {
-						List<int> _uservalues = new List<int>(3);
+						List<String> _uservalues = new List<String>();
 						try {
 							print('Passing user set value in settings...');
-							_uservalues[0]  = int.parse(uservalues[0].text);
-							_uservalues[1] = int.parse(uservalues[1].text);
-							_uservalues[2] = SettingsSwitchState.isSwitched == false ? 0 : 1;
+							_uservalues.add(uservalues[0].text);
+							_uservalues.add(uservalues[1].text);
+							_uservalues.add(settingsThemeSwitchKey.currentState.isSwitched == false ? "light" : "dark");
+							if (lastNotiSettings != null && lastNotiSettings.length >= 2) {
+								_uservalues.add(lastNotiSettings[0].toString().toLowerCase());
+								_uservalues.add(lastNotiSettings[1].toString().toLowerCase());
+							}
 						}
 						on FormatException {
 							print('The set value is not a valid integer.');
@@ -78,12 +77,12 @@ class SettingsPageState extends State<SettingsPage> {
 							SizedBox(
 								height: 5,
 							),
-							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['Dark theme'], iteminput: [SettingsSwitch()]),
-							SettingsItem(itemheight:120, itemcount: 2, itemname: ['Work Interval (min)', 'Rest Interval (min)'], iteminput: [SettingsValueBox(uservalues[0]), SettingsValueBox(uservalues[1])]),
+							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['Dark theme'], iteminput: [userswitches[0]]),
+							SettingsItem(itemheight:120, itemcount: 2, itemname: ['Work Interval (min)', 'Rest Interval (min)'], iteminput: [new SettingsValueBox(uservalues[0]), new SettingsValueBox(uservalues[1])]),
 							DivideLine(),
-							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['Notification']),
-							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['About'], itemfunction: ()=>openAboutPage(context),),
-							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['Reset to Default'], itemfunction: ()=>SettingsPageState.resetDefaultSettings(),),
+							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['Notification'], itemfunction: () => PageManager.openNotificationPage(context)),
+							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['About'], itemfunction: () => PageManager.openAboutPage(context),),
+							SettingsItem(itemheight: 60, itemcount: 1, itemname: ['Reset to Default'], itemfunction: () => SettingsPageState.resetDefaultSettings(context),),
 							DivideLine(),
 						],
 					),
