@@ -20,12 +20,13 @@ class NotificationPageState extends State<NotificationPage> {
     return Scaffold(
 			backgroundColor: MyApp.myConfig.currentTheme.wallColor,
 			appBar: AppBar(
+        backgroundColor: Colors.red,
 				title: Text('Notification'),
         elevation: 10,
 				leading: IconButton(
 					icon: Icon(Icons.arrow_back, color: Colors.white),
 					onPressed: () {
-						List<bool> _uservalues = new List<bool>(2);
+						List<bool> _uservalues = List<bool>.filled(2, null);
 						try {
 							print('Passing user set value in notification...');
 							_uservalues[0]  = settingsNotifySwitchKey.currentState.isSwitched;

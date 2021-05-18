@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
 			return FutureBuilder<dynamic>( 
 				future: myConfig.loadUserSettings(),
 				builder:(context, snapshot) {
-					return AppLoadingPage();
+					return MaterialApp(home: AppLoadingPage());
 				}
 			);
 	}

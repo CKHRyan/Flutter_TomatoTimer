@@ -142,14 +142,15 @@ class LocalNotification {
 					didReceiveLocalNotificationSubject.add(ReceivedNotification(
 							id: id, title: title, body: body, payload: payload));
 				});
-		var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+		var initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 		await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-		onSelectNotification: (String payload) async {
-			if (payload != null) {
-				debugPrint('notification payload: ' + payload);
-			}
-			selectNotificationSubject.add(payload);
-		});
+		  onSelectNotification: (String payload) async {
+        if (payload != null) {
+          debugPrint('notification payload: ' + payload);
+        }
+        selectNotificationSubject.add(payload);
+      }
+    );
 	}
 
 	Future<void> sendNotification(String action, message) async {
@@ -158,10 +159,12 @@ class LocalNotification {
 		}
 		var androidPlatformChannelSpecifics = AndroidNotificationDetails(
 				'com.rchungkh.tomatotimer', 'Tomato Timer', 'Notification for time alarm.',
-				importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+				importance: Importance.max, priority: Priority.high, ticker: 'ticker');
 		var iOSPlatformChannelSpecifics = IOSNotificationDetails();
 		var platformChannelSpecifics = NotificationDetails(
-				androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+				android: androidPlatformChannelSpecifics, 
+        iOS: iOSPlatformChannelSpecifics
+    );
 		await flutterLocalNotificationsPlugin.show(
 				0, action, message, platformChannelSpecifics,
 				payload: 'item x');

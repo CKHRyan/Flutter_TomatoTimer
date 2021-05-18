@@ -12,8 +12,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-	static List<TextEditingController> uservalues = new List<TextEditingController>();
-	static List<SettingsSwitch> userswitches = new List<SettingsSwitch>();
+	static List<TextEditingController> uservalues = [];
+	static List<SettingsSwitch> userswitches = [];
 	static List<bool> lastNotiSettings;
 
 	@override
@@ -43,12 +43,13 @@ class SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       backgroundColor: MyApp.myConfig.currentTheme.wallColor,
       appBar: AppBar(
+        backgroundColor: Colors.red,
         title: Text('Settings'),
         elevation: 10,
 				leading: IconButton(
 					icon: Icon(Icons.arrow_back, color: Colors.white),
 					onPressed: () {
-						List<String> _uservalues = new List<String>();
+						List<String> _uservalues = [];
 						try {
 							print('Passing user set value in settings...');
 							_uservalues.add(uservalues[0].text);

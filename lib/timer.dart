@@ -7,7 +7,6 @@ import 'topheader.dart';
 import 'statustitle.dart';
 import 'methods.dart';
 
-
 class TimerPage extends StatefulWidget {
 	TimerPage({Key key}) : super(key: key);
 	static ValueNotifier isMainPage = ValueNotifier(false);
@@ -15,7 +14,10 @@ class TimerPage extends StatefulWidget {
 	TimerPageState createState() => TimerPageState();
 }
 
+ final GlobalKey _scaffoldKey = GlobalKey();
+ 
 class TimerPageState extends State<TimerPage> {
+  // Default values
 	int currentsec = 10;
 	int workInterval = 25;
 	int restInterval = 5;
@@ -63,6 +65,9 @@ class TimerPageState extends State<TimerPage> {
 					break;
 			}
 		}
+    else {
+      print('The alarm is running...');
+    }
 	}
 	
 	stopAlarm() async {
@@ -85,7 +90,12 @@ class TimerPageState extends State<TimerPage> {
 				break;
 		}
 		if (action != null && message != null) {
-			showAlertDialog(this.context, action, message);
+      try {
+			  showAlertDialog(this.context, action, message);
+      }
+      catch (err) {
+        print(err.toString());
+      }
 		}
 		
 		Vibrator().vibrate();
@@ -95,7 +105,7 @@ class TimerPageState extends State<TimerPage> {
 	startWork() {
 		setState(() {
 			status = 'Work';
-			currentsec = workInterval;
+			currentsec = workInterval * 60;
 		});
 		this.startTimer();
 	}
@@ -103,7 +113,7 @@ class TimerPageState extends State<TimerPage> {
 	startRest() {
 		setState(() {
 			status = 'Rest';
-			currentsec = restInterval;
+			currentsec = restInterval * 60;
 		});
 		this.startTimer();
 	}
@@ -135,12 +145,14 @@ class TimerPageState extends State<TimerPage> {
 	}
 
 	showAlertDialog(BuildContext context, String act, String msg) {
+    BuildContext dialogContext;
+
 		// set up the button
-		Widget okButton = FlatButton(
+		Widget okButton = TextButton(
 			child: Text("OK"),
 			onPressed: () {
 				MyApp.myNotification.cancelNotification();
-				Navigator.of(context).pop();
+				Navigator.pop(dialogContext);
 			},
 		);
 
@@ -157,6 +169,7 @@ class TimerPageState extends State<TimerPage> {
 		showDialog(
 			context: context,
 			builder: (BuildContext context) {
+        dialogContext = context;
 				return alert;
 			},
 		);
@@ -166,6 +179,7 @@ class TimerPageState extends State<TimerPage> {
 	Widget build(BuildContext context) {
 		Size size = MediaQuery.of(context).size;
 		return Scaffold(
+      //key: _scaffoldKey,
 			backgroundColor: MyApp.myConfig.currentTheme.wallColor,
 			body: SingleChildScrollView(
 				child: Center(
@@ -185,7 +199,7 @@ class TimerPageState extends State<TimerPage> {
 												width: size.width,
 											),
 										),
-										onTap: this.startAlarm,
+										onTap: this.startAlarm
 									),
 									Positioned.fill(
 										bottom: -180,
@@ -209,7 +223,7 @@ class TimerPageState extends State<TimerPage> {
 						],
 					),
 				),
-			)
+			),
 		);
 	}
 }

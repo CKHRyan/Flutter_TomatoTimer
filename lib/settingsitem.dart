@@ -29,7 +29,7 @@ class SettingsItemState extends State<SettingsItem> {
 
   @override
   Widget build(BuildContext context) {
-		List<Widget> itemlist = new List<Widget>();
+		List<Widget> itemlist = [];
     for(var i = 0; i < widget.itemcount; i++){
         itemlist.add(
 					Container(
@@ -134,13 +134,14 @@ class SettingsSwitchState extends State<SettingsSwitch> {
 	@override
   Widget build(BuildContext context) { 
     return Switch(
-				value: this.isSwitched,
-				onChanged: (bool value) {
-					setState(() {
-					  this.isSwitched = value;
-					});
-					print("The switch turns to " + value.toString());
-				},
+      activeColor: Colors.red,
+      value: this.isSwitched,
+      onChanged: (bool value) {
+        setState(() {
+          this.isSwitched = value;
+        });
+        print("The switch turns to " + value.toString());
+      },
 		);
 	}
 }

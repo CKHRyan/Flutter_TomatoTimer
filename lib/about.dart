@@ -18,6 +18,7 @@ class AboutPageState extends State<AboutPage> {
     return Scaffold(
 			backgroundColor: MyApp.myConfig.currentTheme.wallColor,
 			appBar: AppBar(
+        backgroundColor: Colors.red,
 				title: Text("About"),
 				elevation: 10,
 			),
